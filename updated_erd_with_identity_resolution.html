@@ -1,0 +1,146 @@
+<style>
+#erd svg.erDiagram .divider path { stroke-opacity: 0.5; }
+#erd svg.erDiagram .row-rect-odd path,
+#erd svg.erDiagram .row-rect-odd rect,
+#erd svg.erDiagram .row-rect-even path,
+#erd svg.erDiagram .row-rect-even rect { stroke: none !important; }
+</style>
+<div id="erd"></div>
+<script type="module">
+import mermaid from 'https://esm.sh/mermaid@11/dist/mermaid.esm.min.mjs';
+const dark = matchMedia('(prefers-color-scheme: dark)').matches;
+await document.fonts.ready;
+mermaid.initialize({
+  startOnLoad: false,
+  theme: 'base',
+  fontFamily: '"Anthropic Sans", sans-serif',
+  themeVariables: {
+    darkMode: dark,
+    fontSize: '13px',
+    fontFamily: '"Anthropic Sans", sans-serif',
+    lineColor: dark ? '#9c9a92' : '#73726c',
+    textColor: dark ? '#c2c0b6' : '#3d3d3a',
+  },
+});
+const { svg } = await mermaid.render('erd-svg', `erDiagram
+  UNIFIED_USERS ||--o{ SOCIAL_PROFILES : "owns"
+  UNIFIED_USERS ||--o{ PROFILE_LINKS : "has evidence"
+  SOCIAL_PROFILES ||--o{ POSTS : "publishes"
+  SOCIAL_PROFILES ||--o{ PROFILE_INTERESTS : "tagged with"
+  SOCIAL_PROFILES }o--o| CLUSTERS : "belongs to"
+  PROFILE_LINKS }o--|| SOCIAL_PROFILES : "source"
+  PROFILE_LINKS }o--|| SOCIAL_PROFILES : "target"
+  CLUSTERS ||--o{ CLUSTER_METRICS : "tracked by"
+  CAMPAIGNS ||--o{ CAMPAIGN_AUDIENCES : "targets"
+  CAMPAIGN_AUDIENCES }o--|| CLUSTERS : "references"
+  UNIFIED_USERS {
+    uuid id PK
+    string canonical_name
+    string canonical_email
+    string canonical_location
+    vector merged_embedding
+    jsonb merged_interests
+    timestamp created_at
+    timestamp updated_at
+  }
+  PROFILE_LINKS {
+    uuid id PK
+    uuid unified_user_id FK
+    uuid source_profile_id FK
+    uuid target_profile_id FK
+    float confidence
+    string match_method
+    string status
+    timestamp created_at
+    uuid reviewed_by
+  }
+  SOCIAL_PROFILES {
+    uuid id PK
+    uuid unified_user_id FK
+    string platform
+    string platform_user_id
+    string display_name
+    string bio
+    string location_inferred
+    int follower_count
+    int following_count
+    vector embedding
+    int cluster_id FK
+    float affinity_score
+    timestamp last_collected
+  }
+  POSTS {
+    uuid id PK
+    uuid profile_id FK
+    string content
+    string post_type
+    int likes
+    int reposts
+    jsonb entities
+    float sentiment_score
+    timestamp posted_at
+  }
+  PROFILE_INTERESTS {
+    uuid id PK
+    uuid profile_id FK
+    string topic
+    float confidence
+  }
+  CLUSTERS {
+    int id PK
+    string label
+    string description
+    int member_count
+    jsonb top_interests
+    timestamp last_updated
+  }
+  CLUSTER_METRICS {
+    uuid id PK
+    int cluster_id FK
+    float avg_engagement
+    float avg_followers
+    jsonb interest_distribution
+    date computed_date
+  }
+  CAMPAIGNS {
+    uuid id PK
+    string name
+    uuid owner_id
+    string status
+    jsonb filters
+    timestamp created_at
+  }
+  CAMPAIGN_AUDIENCES {
+    uuid id PK
+    uuid campaign_id FK
+    int cluster_id FK
+    int estimated_reach
+    string export_status
+  }
+`);
+document.getElementById('erd').innerHTML = svg;
+
+document.querySelectorAll('#erd svg.erDiagram .node').forEach(node => {
+  const firstPath = node.querySelector('path[d]');
+  if (!firstPath) return;
+  const d = firstPath.getAttribute('d');
+  const nums = d.match(/-?[\d.]+/g)?.map(Number);
+  if (!nums || nums.length < 8) return;
+  const xs = [nums[0], nums[2], nums[4], nums[6]];
+  const ys = [nums[1], nums[3], nums[5], nums[7]];
+  const x = Math.min(...xs), y = Math.min(...ys);
+  const w = Math.max(...xs) - x, h = Math.max(...ys) - y;
+  const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+  rect.setAttribute('x', x); rect.setAttribute('y', y);
+  rect.setAttribute('width', w); rect.setAttribute('height', h);
+  rect.setAttribute('rx', '8');
+  for (const a of ['fill', 'stroke', 'stroke-width', 'class', 'style']) {
+    if (firstPath.hasAttribute(a)) rect.setAttribute(a, firstPath.getAttribute(a));
+  }
+  firstPath.replaceWith(rect);
+});
+
+document.querySelectorAll('#erd svg.erDiagram .row-rect-odd path, #erd svg.erDiagram .row-rect-even path').forEach(p => {
+  p.setAttribute('stroke', 'none');
+});
+</script>

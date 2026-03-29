@@ -1,0 +1,325 @@
+time="2026-03-29T21:05:54+01:00" level=warning msg="C:\\Users\\enaic\\MERUEM\\docker-compose.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion"
+api-1  | INFO:     Will watch for changes in these directories: ['/app']
+api-1  | INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+api-1  | INFO:     Started reloader process [1] using WatchFiles
+api-1  | INFO:     Started server process [8]
+api-1  | INFO:     Waiting for application startup.
+api-1  | INFO:     Application startup complete.
+api-1  | INFO:     172.19.0.1:59082 - "GET / HTTP/1.1" 200 OK
+api-1  | INFO:     172.19.0.1:59082 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+api-1  | INFO:     172.19.0.7:43920 - "POST /api/v1/auth/login HTTP/1.1" 500 Internal Server Error
+api-1  | ERROR:    Exception in ASGI application
+api-1  | Traceback (most recent call last):
+api-1  |   File "/usr/local/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+api-1  |     self.dialect.do_execute(
+api-1  |   File "/usr/local/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+api-1  |     cursor.execute(statement, parameters)
+api-1  |   File "/usr/local/lib/python3.12/site-packages/psycopg/cursor.py", line 117, in execute
+api-1  |     raise ex.with_traceback(None)
+api-1  | psycopg.errors.UndefinedTable: relation "accounts" does not exist
+api-1  | LINE 2: FROM accounts 
+api-1  |              ^
+api-1  | 
+api-1  | The above exception was the direct cause of the following exception:
+api-1  | 
+api-1  | Traceback (most recent call last):
+api-1  |   File "/usr/local/lib/python3.12/site-packages/uvicorn/protocols/http/httptools_impl.py", line 416, in run_asgi
+api-1  |     result = await app(  # type: ignore[func-returns-value]
+api-1  |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/usr/local/lib/python3.12/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+api-1  |     return await self.app(scope, receive, send)
+api-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/usr/local/lib/python3.12/site-packages/fastapi/applications.py", line 1159, in __call__
+api-1  |     await super().__call__(scope, receive, send)
+api-1  |   File "/usr/local/lib/python3.12/site-packages/starlette/applications.py", line 90, in __call__
+api-1  |     await self.middleware_stack(scope, receive, send)
+api-1  |   File "/usr/local/lib/python3.12/site-packages/starlette/middleware/errors.py", line 186, in __call__
+api-1  |     raise exc
+api-1  |   File "/usr/local/lib/python3.12/site-packages/starlette/middleware/errors.py", line 164, in __call__
+api-1  |     await self.app(scope, receive, _send)
+api-1  |   File "/usr/local/lib/python3.12/site-packages/starlette/middleware/cors.py", line 96, in __call__
+api-1  |     await self.simple_response(scope, receive, send, request_headers=headers)
+api-1  |   File "/usr/local/lib/python3.12/site-packages/starlette/middleware/cors.py", line 154, in simple_response
+api-1  |     await self.app(scope, receive, send)
+api-1  |   File "/usr/local/lib/python3.12/site-packages/starlette/middleware/base.py", line 191, in __call__
+api-1  |     with recv_stream, send_stream, collapse_excgroups():
+api-1  |                                    ^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/usr/local/lib/python3.12/contextlib.py", line 158, in __exit__
+api-1  |     self.gen.throw(value)
+api-1  |   File "/usr/local/lib/python3.12/site-packages/starlette/_utils.py", line 87, in collapse_excgroups
+api-1  |     raise exc
+api-1  |   File "/usr/local/lib/python3.12/site-packages/starlette/middleware/base.py", line 193, in __call__
+api-1  |     response = await self.dispatch_func(request, call_next)
+api-1  |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/app/app/core/metrics.py", line 56, in dispatch
+api-1  |     response = await call_next(request)
+api-1  |                ^^^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/usr/local/lib/python3.12/site-packages/starlette/middleware/base.py", line 168, in call_next
+api-1  |     raise app_exc from app_exc.__cause__ or app_exc.__context__
+api-1  |   File "/usr/local/lib/python3.12/site-packages/starlette/middleware/base.py", line 144, in coro
+api-1  |     await self.app(scope, receive_or_disconnect, send_no_error)
+api-1  |   File "/usr/local/lib/python3.12/site-packages/starlette/middleware/base.py", line 191, in __call__
+api-1  |     with recv_stream, send_stream, collapse_excgroups():
+api-1  |                                    ^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/usr/local/lib/python3.12/contextlib.py", line 158, in __exit__
+api-1  |     self.gen.throw(value)
+api-1  |   File "/usr/local/lib/python3.12/site-packages/starlette/_utils.py", line 87, in collapse_excgroups
+api-1  |     raise exc
+api-1  |   File "/usr/local/lib/python3.12/site-packages/starlette/middleware/base.py", line 193, in __call__
+api-1  |     response = await self.dispatch_func(request, call_next)
+api-1  |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/usr/local/lib/python3.12/site-packages/slowapi/middleware.py", line 136, in dispatch
+api-1  |     response = await call_next(request)
+api-1  |                ^^^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/usr/local/lib/python3.12/site-packages/starlette/middleware/base.py", line 168, in call_next
+api-1  |     raise app_exc from app_exc.__cause__ or app_exc.__context__
+api-1  |   File "/usr/local/lib/python3.12/site-packages/starlette/middleware/base.py", line 144, in coro
+api-1  |     await self.app(scope, receive_or_disconnect, send_no_error)
+api-1  |   File "/usr/local/lib/python3.12/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+api-1  |     await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+api-1  |   File "/usr/local/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+api-1  |     raise exc
+api-1  |   File "/usr/local/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+api-1  |     await app(scope, receive, sender)
+api-1  |   File "/usr/local/lib/python3.12/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+api-1  |     await self.app(scope, receive, send)
+api-1  |   File "/usr/local/lib/python3.12/site-packages/starlette/routing.py", line 660, in __call__
+api-1  |     await self.middleware_stack(scope, receive, send)
+api-1  |   File "/usr/local/lib/python3.12/site-packages/starlette/routing.py", line 680, in app
+api-1  |     await route.handle(scope, receive, send)
+api-1  |   File "/usr/local/lib/python3.12/site-packages/starlette/routing.py", line 276, in handle
+api-1  |     await self.app(scope, receive, send)
+api-1  |   File "/usr/local/lib/python3.12/site-packages/fastapi/routing.py", line 134, in app
+api-1  |     await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+api-1  |   File "/usr/local/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+api-1  |     raise exc
+api-1  |   File "/usr/local/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+api-1  |     await app(scope, receive, sender)
+api-1  |   File "/usr/local/lib/python3.12/site-packages/fastapi/routing.py", line 120, in app
+api-1  |     response = await f(request)
+api-1  |                ^^^^^^^^^^^^^^^^
+api-1  |   File "/usr/local/lib/python3.12/site-packages/fastapi/routing.py", line 674, in app
+api-1  |     raw_response = await run_endpoint_function(
+api-1  |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/usr/local/lib/python3.12/site-packages/fastapi/routing.py", line 330, in run_endpoint_function
+api-1  |     return await run_in_threadpool(dependant.call, **values)
+api-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/usr/local/lib/python3.12/site-packages/starlette/concurrency.py", line 32, in run_in_threadpool
+api-1  |     return await anyio.to_thread.run_sync(func)
+api-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/usr/local/lib/python3.12/site-packages/anyio/to_thread.py", line 63, in run_sync
+api-1  |     return await get_async_backend().run_sync_in_worker_thread(
+api-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/usr/local/lib/python3.12/site-packages/anyio/_backends/_asyncio.py", line 2518, in run_sync_in_worker_thread
+api-1  |     return await future
+api-1  |            ^^^^^^^^^^^^
+api-1  |   File "/usr/local/lib/python3.12/site-packages/anyio/_backends/_asyncio.py", line 1002, in run
+api-1  |     result = context.run(func, *args)
+api-1  |              ^^^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/app/app/api/v1/routes/auth.py", line 37, in login
+api-1  |     account = db.query(Account).filter(Account.email == payload.email).first()
+api-1  |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/usr/local/lib/python3.12/site-packages/sqlalchemy/orm/query.py", line 2759, in first
+api-1  |     return self.limit(1)._iter().first()  # type: ignore
+api-1  |            ^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/usr/local/lib/python3.12/site-packages/sqlalchemy/orm/query.py", line 2857, in _iter
+api-1  |     result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+api-1  |                                                   ^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/usr/local/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 2351, in execute
+api-1  |     return self._execute_internal(
+api-1  |            ^^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/usr/local/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 2249, in _execute_internal
+api-1  |     result: Result[Any] = compile_state_cls.orm_execute_statement(
+api-1  |                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/usr/local/lib/python3.12/site-packages/sqlalchemy/orm/context.py", line 306, in orm_execute_statement
+api-1  |     result = conn.execute(
+api-1  |              ^^^^^^^^^^^^^
+api-1  |   File "/usr/local/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1419, in execute
+api-1  |     return meth(
+api-1  |            ^^^^^
+api-1  |   File "/usr/local/lib/python3.12/site-packages/sqlalchemy/sql/elements.py", line 527, in _execute_on_connection
+api-1  |     return connection._execute_clauseelement(
+api-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/usr/local/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1641, in _execute_clauseelement
+api-1  |     ret = self._execute_context(
+api-1  |           ^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/usr/local/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+api-1  |     return self._exec_single_context(
+api-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/usr/local/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+api-1  |     self._handle_dbapi_exception(
+api-1  |   File "/usr/local/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 2363, in _handle_dbapi_exception
+api-1  |     raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+api-1  |   File "/usr/local/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+api-1  |     self.dialect.do_execute(
+api-1  |   File "/usr/local/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+api-1  |     cursor.execute(statement, parameters)
+api-1  |   File "/usr/local/lib/python3.12/site-packages/psycopg/cursor.py", line 117, in execute
+api-1  |     raise ex.with_traceback(None)
+api-1  | sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "accounts" does not exist
+api-1  | LINE 2: FROM accounts 
+api-1  |              ^
+api-1  | [SQL: SELECT accounts.id AS accounts_id, accounts.email AS accounts_email, accounts.hashed_password AS accounts_hashed_password, accounts.full_name AS accounts_full_name, accounts.role AS accounts_role, accounts.api_key AS accounts_api_key, accounts.is_active AS accounts_is_active, accounts.created_at AS accounts_created_at, accounts.updated_at AS accounts_updated_at 
+api-1  | FROM accounts 
+api-1  | WHERE accounts.email = %(email_1)s::VARCHAR 
+api-1  |  LIMIT %(param_1)s::INTEGER]
+api-1  | [parameters: {'email_1': 'villain@gmail.com', 'param_1': 1}]
+api-1  | (Background on this error at: https://sqlalche.me/e/20/f405)
+api-1  | INFO:     172.19.0.7:43932 - "POST /api/v1/auth/login HTTP/1.1" 500 Internal Server Error
+api-1  | ERROR:    Exception in ASGI application
+api-1  | Traceback (most recent call last):
+api-1  |   File "/usr/local/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+api-1  |     self.dialect.do_execute(
+api-1  |   File "/usr/local/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+api-1  |     cursor.execute(statement, parameters)
+api-1  |   File "/usr/local/lib/python3.12/site-packages/psycopg/cursor.py", line 117, in execute
+api-1  |     raise ex.with_traceback(None)
+api-1  | psycopg.errors.UndefinedTable: relation "accounts" does not exist
+api-1  | LINE 2: FROM accounts 
+api-1  |              ^
+api-1  | 
+api-1  | The above exception was the direct cause of the following exception:
+api-1  | 
+api-1  | Traceback (most recent call last):
+api-1  |   File "/usr/local/lib/python3.12/site-packages/uvicorn/protocols/http/httptools_impl.py", line 416, in run_asgi
+api-1  |     result = await app(  # type: ignore[func-returns-value]
+api-1  |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/usr/local/lib/python3.12/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+api-1  |     return await self.app(scope, receive, send)
+api-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/usr/local/lib/python3.12/site-packages/fastapi/applications.py", line 1159, in __call__
+api-1  |     await super().__call__(scope, receive, send)
+api-1  |   File "/usr/local/lib/python3.12/site-packages/starlette/applications.py", line 90, in __call__
+api-1  |     await self.middleware_stack(scope, receive, send)
+api-1  |   File "/usr/local/lib/python3.12/site-packages/starlette/middleware/errors.py", line 186, in __call__
+api-1  |     raise exc
+api-1  |   File "/usr/local/lib/python3.12/site-packages/starlette/middleware/errors.py", line 164, in __call__
+api-1  |     await self.app(scope, receive, _send)
+api-1  |   File "/usr/local/lib/python3.12/site-packages/starlette/middleware/cors.py", line 96, in __call__
+api-1  |     await self.simple_response(scope, receive, send, request_headers=headers)
+api-1  |   File "/usr/local/lib/python3.12/site-packages/starlette/middleware/cors.py", line 154, in simple_response
+api-1  |     await self.app(scope, receive, send)
+api-1  |   File "/usr/local/lib/python3.12/site-packages/starlette/middleware/base.py", line 191, in __call__
+api-1  |     with recv_stream, send_stream, collapse_excgroups():
+api-1  |                                    ^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/usr/local/lib/python3.12/contextlib.py", line 158, in __exit__
+api-1  |     self.gen.throw(value)
+api-1  |   File "/usr/local/lib/python3.12/site-packages/starlette/_utils.py", line 87, in collapse_excgroups
+api-1  |     raise exc
+api-1  |   File "/usr/local/lib/python3.12/site-packages/starlette/middleware/base.py", line 193, in __call__
+api-1  |     response = await self.dispatch_func(request, call_next)
+api-1  |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/app/app/core/metrics.py", line 56, in dispatch
+api-1  |     response = await call_next(request)
+api-1  |                ^^^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/usr/local/lib/python3.12/site-packages/starlette/middleware/base.py", line 168, in call_next
+api-1  |     raise app_exc from app_exc.__cause__ or app_exc.__context__
+api-1  |   File "/usr/local/lib/python3.12/site-packages/starlette/middleware/base.py", line 144, in coro
+api-1  |     await self.app(scope, receive_or_disconnect, send_no_error)
+api-1  |   File "/usr/local/lib/python3.12/site-packages/starlette/middleware/base.py", line 191, in __call__
+api-1  |     with recv_stream, send_stream, collapse_excgroups():
+api-1  |                                    ^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/usr/local/lib/python3.12/contextlib.py", line 158, in __exit__
+api-1  |     self.gen.throw(value)
+api-1  |   File "/usr/local/lib/python3.12/site-packages/starlette/_utils.py", line 87, in collapse_excgroups
+api-1  |     raise exc
+api-1  |   File "/usr/local/lib/python3.12/site-packages/starlette/middleware/base.py", line 193, in __call__
+api-1  |     response = await self.dispatch_func(request, call_next)
+api-1  |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/usr/local/lib/python3.12/site-packages/slowapi/middleware.py", line 136, in dispatch
+api-1  |     response = await call_next(request)
+api-1  |                ^^^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/usr/local/lib/python3.12/site-packages/starlette/middleware/base.py", line 168, in call_next
+api-1  |     raise app_exc from app_exc.__cause__ or app_exc.__context__
+api-1  |   File "/usr/local/lib/python3.12/site-packages/starlette/middleware/base.py", line 144, in coro
+api-1  |     await self.app(scope, receive_or_disconnect, send_no_error)
+api-1  |   File "/usr/local/lib/python3.12/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+api-1  |     await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+api-1  |   File "/usr/local/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+api-1  |     raise exc
+api-1  |   File "/usr/local/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+api-1  |     await app(scope, receive, sender)
+api-1  |   File "/usr/local/lib/python3.12/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+api-1  |     await self.app(scope, receive, send)
+api-1  |   File "/usr/local/lib/python3.12/site-packages/starlette/routing.py", line 660, in __call__
+api-1  |     await self.middleware_stack(scope, receive, send)
+api-1  |   File "/usr/local/lib/python3.12/site-packages/starlette/routing.py", line 680, in app
+api-1  |     await route.handle(scope, receive, send)
+api-1  |   File "/usr/local/lib/python3.12/site-packages/starlette/routing.py", line 276, in handle
+api-1  |     await self.app(scope, receive, send)
+api-1  |   File "/usr/local/lib/python3.12/site-packages/fastapi/routing.py", line 134, in app
+api-1  |     await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+api-1  |   File "/usr/local/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+api-1  |     raise exc
+api-1  |   File "/usr/local/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+api-1  |     await app(scope, receive, sender)
+api-1  |   File "/usr/local/lib/python3.12/site-packages/fastapi/routing.py", line 120, in app
+api-1  |     response = await f(request)
+api-1  |                ^^^^^^^^^^^^^^^^
+api-1  |   File "/usr/local/lib/python3.12/site-packages/fastapi/routing.py", line 674, in app
+api-1  |     raw_response = await run_endpoint_function(
+api-1  |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/usr/local/lib/python3.12/site-packages/fastapi/routing.py", line 330, in run_endpoint_function
+api-1  |     return await run_in_threadpool(dependant.call, **values)
+api-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/usr/local/lib/python3.12/site-packages/starlette/concurrency.py", line 32, in run_in_threadpool
+api-1  |     return await anyio.to_thread.run_sync(func)
+api-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/usr/local/lib/python3.12/site-packages/anyio/to_thread.py", line 63, in run_sync
+api-1  |     return await get_async_backend().run_sync_in_worker_thread(
+api-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/usr/local/lib/python3.12/site-packages/anyio/_backends/_asyncio.py", line 2518, in run_sync_in_worker_thread
+api-1  |     return await future
+api-1  |            ^^^^^^^^^^^^
+api-1  |   File "/usr/local/lib/python3.12/site-packages/anyio/_backends/_asyncio.py", line 1002, in run
+api-1  |     result = context.run(func, *args)
+api-1  |              ^^^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/app/app/api/v1/routes/auth.py", line 37, in login
+api-1  |     account = db.query(Account).filter(Account.email == payload.email).first()
+api-1  |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/usr/local/lib/python3.12/site-packages/sqlalchemy/orm/query.py", line 2759, in first
+api-1  |     return self.limit(1)._iter().first()  # type: ignore
+api-1  |            ^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/usr/local/lib/python3.12/site-packages/sqlalchemy/orm/query.py", line 2857, in _iter
+api-1  |     result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+api-1  |                                                   ^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/usr/local/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 2351, in execute
+api-1  |     return self._execute_internal(
+api-1  |            ^^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/usr/local/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 2249, in _execute_internal
+api-1  |     result: Result[Any] = compile_state_cls.orm_execute_statement(
+api-1  |                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/usr/local/lib/python3.12/site-packages/sqlalchemy/orm/context.py", line 306, in orm_execute_statement
+api-1  |     result = conn.execute(
+api-1  |              ^^^^^^^^^^^^^
+api-1  |   File "/usr/local/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1419, in execute
+api-1  |     return meth(
+api-1  |            ^^^^^
+api-1  |   File "/usr/local/lib/python3.12/site-packages/sqlalchemy/sql/elements.py", line 527, in _execute_on_connection
+api-1  |     return connection._execute_clauseelement(
+api-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/usr/local/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1641, in _execute_clauseelement
+api-1  |     ret = self._execute_context(
+api-1  |           ^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/usr/local/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+api-1  |     return self._exec_single_context(
+api-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/usr/local/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+api-1  |     self._handle_dbapi_exception(
+api-1  |   File "/usr/local/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 2363, in _handle_dbapi_exception
+api-1  |     raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+api-1  |   File "/usr/local/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+api-1  |     self.dialect.do_execute(
+api-1  |   File "/usr/local/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+api-1  |     cursor.execute(statement, parameters)
+api-1  |   File "/usr/local/lib/python3.12/site-packages/psycopg/cursor.py", line 117, in execute
+api-1  |     raise ex.with_traceback(None)
+api-1  | sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "accounts" does not exist
+api-1  | LINE 2: FROM accounts 
+api-1  |              ^
+api-1  | [SQL: SELECT accounts.id AS accounts_id, accounts.email AS accounts_email, accounts.hashed_password AS accounts_hashed_password, accounts.full_name AS accounts_full_name, accounts.role AS accounts_role, accounts.api_key AS accounts_api_key, accounts.is_active AS accounts_is_active, accounts.created_at AS accounts_created_at, accounts.updated_at AS accounts_updated_at 
+api-1  | FROM accounts 
+api-1  | WHERE accounts.email = %(email_1)s::VARCHAR 
+api-1  |  LIMIT %(param_1)s::INTEGER]
+api-1  | [parameters: {'email_1': 'villain@gmail.com', 'param_1': 1}]
+api-1  | (Background on this error at: https://sqlalche.me/e/20/f405)

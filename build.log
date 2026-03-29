@@ -1,0 +1,13 @@
+time="2026-03-29T20:16:55+01:00" level=warning msg="C:\\Users\\enaic\\OneDrive\\Desktop\\miyata\\MERUEM\\docker-compose.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion"
+#1 [internal] load local bake definitions
+#1 reading from stdin 1.04kB done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 31B 0.0s done
+#2 ERROR: invalid file request Dockerfile
+------
+ > [internal] load build definition from Dockerfile:
+------
+failed to solve: failed to read dockerfile: invalid file request Dockerfile
+

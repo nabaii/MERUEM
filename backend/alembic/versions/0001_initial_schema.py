@@ -62,7 +62,7 @@ def upgrade() -> None:
         sa.Column("email", sa.String(255), nullable=False),
         sa.Column("hashed_password", sa.String(255), nullable=False),
         sa.Column("full_name", sa.String(255)),
-        sa.Column("role", sa.Enum("admin", "client", name="role_enum", create_type=False), nullable=False, server_default="client"),
+        sa.Column("role", postgresql.ENUM("admin", "client", name="role_enum", create_type=False), nullable=False, server_default="client"),
         sa.Column("api_key", sa.String(64)),
         sa.Column("is_active", sa.Boolean(), nullable=False, server_default="true"),
         sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("now()")),
@@ -178,7 +178,7 @@ def upgrade() -> None:
         sa.Column("target_profile_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("social_profiles.id"), nullable=False),
         sa.Column("confidence", sa.Float(), nullable=False),
         sa.Column("match_method", sa.String(100), nullable=False),
-        sa.Column("status", sa.Enum("pending", "confirmed", "rejected", name="link_status_enum", create_type=False), nullable=False, server_default="pending"),
+        sa.Column("status", postgresql.ENUM("pending", "confirmed", "rejected", name="link_status_enum", create_type=False), nullable=False, server_default="pending"),
         sa.Column("reviewed_by", postgresql.UUID(as_uuid=True)),
         sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("now()")),
     )
@@ -208,7 +208,7 @@ def upgrade() -> None:
         sa.Column("id", postgresql.UUID(as_uuid=True), primary_key=True),
         sa.Column("name", sa.String(255), nullable=False),
         sa.Column("owner_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("accounts.id")),
-        sa.Column("status", sa.Enum("draft", "active", "exported", "completed", name="campaign_status_enum", create_type=False), nullable=False, server_default="draft"),
+        sa.Column("status", postgresql.ENUM("draft", "active", "exported", "completed", name="campaign_status_enum", create_type=False), nullable=False, server_default="draft"),
         sa.Column("filters", postgresql.JSONB()),
         sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("now()")),
         sa.Column("updated_at", sa.DateTime(timezone=True), server_default=sa.text("now()")),
@@ -224,7 +224,7 @@ def upgrade() -> None:
         sa.Column("campaign_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("campaigns.id"), nullable=False),
         sa.Column("cluster_id", sa.Integer(), sa.ForeignKey("clusters.id")),
         sa.Column("estimated_reach", sa.Integer()),
-        sa.Column("export_status", sa.Enum("pending", "exported", "failed", name="export_status_enum", create_type=False), nullable=False, server_default="pending"),
+        sa.Column("export_status", postgresql.ENUM("pending", "exported", "failed", name="export_status_enum", create_type=False), nullable=False, server_default="pending"),
     )
     op.create_index("ix_campaign_audiences_campaign_id", "campaign_audiences", ["campaign_id"])
     op.create_index("ix_campaign_audiences_cluster_id", "campaign_audiences", ["cluster_id"])
@@ -236,7 +236,7 @@ def upgrade() -> None:
         "collection_jobs",
         sa.Column("id", postgresql.UUID(as_uuid=True), primary_key=True),
         sa.Column("platform", sa.String(50), nullable=False),
-        sa.Column("status", sa.Enum("pending", "running", "completed", "failed", name="job_status_enum", create_type=False), nullable=False, server_default="pending"),
+        sa.Column("status", postgresql.ENUM("pending", "running", "completed", "failed", name="job_status_enum", create_type=False), nullable=False, server_default="pending"),
         sa.Column("params", postgresql.JSONB()),
         sa.Column("celery_task_id", sa.String(255)),
         sa.Column("profiles_collected", sa.Integer(), nullable=False, server_default="0"),

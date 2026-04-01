@@ -1,10 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
-import { Users, FileText, Network, Loader } from 'lucide-react'
+import { Users, FileText, Network, Loader, AlertTriangle } from 'lucide-react'
 import { statsApi } from '../api/stats'
 import { StatCard } from '../components/dashboard/StatCard'
 import { ClusterBubbleChart } from '../components/dashboard/ClusterBubbleChart'
 import { Card, CardHeader, CardTitle } from '../components/ui/Card'
 import { Badge } from '../components/ui/Badge'
+import { Button } from '../components/ui/Button'
 import { PageSpinner } from '../components/ui/Spinner'
 import { timeAgo } from '../lib/utils'
 
@@ -16,7 +17,7 @@ const STATUS_COLOR: Record<string, 'green' | 'blue' | 'red' | 'gray'> = {
 }
 
 export function DashboardPage() {
-  const { data, isLoading } = useQuery({
+  const { data, error, isError, isLoading, isRefetching, refetch } = useQuery({
     queryKey: ['stats'],
     queryFn: statsApi.get,
     refetchInterval: 30_000,
@@ -24,7 +25,43 @@ export function DashboardPage() {
 
   if (isLoading) return <PageSpinner />
 
-  const stats = data!
+  if (isError || !data) {
+    return (
+      <Card className="border-red-900/60 bg-red-950/20">
+        <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+          <div className="flex items-start gap-3">
+            <div className="rounded-xl bg-red-900/40 p-3">
+              <AlertTriangle size={20} className="text-red-300" />
+            </div>
+            <div className="space-y-2">
+              <div>
+                <h1 className="text-xl font-semibold text-slate-100">Dashboard unavailable</h1>
+                <p className="mt-1 text-sm text-slate-300">
+                  {error instanceof Error
+                    ? error.message
+                    : 'We could not load the dashboard data right now.'}
+                </p>
+              </div>
+              <p className="text-sm text-slate-400">
+                If you are running locally, start the backend API and try again.
+              </p>
+            </div>
+          </div>
+
+          <Button variant="secondary" onClick={() => refetch()} loading={isRefetching}>
+            Retry
+          </Button>
+        </div>
+      </Card>
+    )
+  }
+
+  const stats = {
+    ...data,
+    profiles_by_platform: data.profiles_by_platform ?? [],
+    top_clusters: data.top_clusters ?? [],
+    recent_jobs: data.recent_jobs ?? [],
+  }
 
   return (
     <div className="space-y-8">

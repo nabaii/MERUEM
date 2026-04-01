@@ -49,6 +49,9 @@ class SocialProfile(Base):
     verified: Mapped[Optional[bool]] = mapped_column(Boolean, default=False)
     engagement_rate: Mapped[Optional[float]] = mapped_column(Float)
     affinity_score: Mapped[Optional[float]] = mapped_column(Float)
+    source_method: Mapped[Optional[str]] = mapped_column(
+        String(20), default="api", comment="api | bot | manual"
+    )
     last_collected: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
     embedding_updated_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = mapped_column(

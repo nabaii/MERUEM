@@ -15,6 +15,7 @@ import { SettingsPage } from './pages/SettingsPage'
 import { CampaignsPage } from './pages/CampaignsPage'
 import { CampaignDetailPage } from './pages/CampaignDetailPage'
 import { CampaignBuilderPage } from './pages/CampaignBuilderPage'
+import { ImportPage } from './pages/ImportPage'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -46,6 +47,8 @@ export default function App() {
             <Route path="/campaigns" element={<CampaignsPage />} />
             <Route path="/campaigns/new" element={<CampaignBuilderPage />} />
             <Route path="/campaigns/:id" element={<CampaignDetailPage />} />
+            {/* Phase 7 — multi-source data import */}
+            <Route path="/import" element={<ImportPage />} />
           </Route>
 
           {/* Default redirect */}

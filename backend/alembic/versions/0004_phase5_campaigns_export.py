@@ -7,7 +7,7 @@ Create Date: 2026-03-29
 
 from alembic import op
 import sqlalchemy as sa
-from sqlalchemy.dialects.postgresql import JSONB, UUID
+from sqlalchemy.dialects.postgresql import ENUM, JSONB, UUID
 
 revision = "0004"
 down_revision = "0003"
@@ -18,15 +18,30 @@ depends_on = None
 def upgrade() -> None:
     # ── Enums ────────────────────────────────────────────────────────────────
     op.execute(
-        "CREATE TYPE notification_type_enum AS ENUM "
-        "('export_ready', 'export_failed', 'campaign_activated', 'campaign_completed', 'system')"
+        """
+        DO $$ BEGIN
+            CREATE TYPE notification_type_enum AS ENUM
+            ('export_ready', 'export_failed', 'campaign_activated', 'campaign_completed', 'system');
+        EXCEPTION WHEN duplicate_object THEN null; END $$;
+        """
     )
     op.execute(
-        "CREATE TYPE export_format_enum AS ENUM ('meta', 'twitter', 'csv')"
+        """
+        DO $$ BEGIN
+            CREATE TYPE export_format_enum AS ENUM ('meta', 'twitter', 'csv');
+        EXCEPTION WHEN duplicate_object THEN null; END $$;
+        """
     )
     op.execute(
-        "CREATE TYPE export_status_enum AS ENUM ('pending', 'processing', 'ready', 'failed')"
+        """
+        DO $$ BEGIN
+            CREATE TYPE export_status_enum AS ENUM
+            ('pending', 'exported', 'processing', 'ready', 'failed');
+        EXCEPTION WHEN duplicate_object THEN null; END $$;
+        """
     )
+    op.execute("ALTER TYPE export_status_enum ADD VALUE IF NOT EXISTS 'processing'")
+    op.execute("ALTER TYPE export_status_enum ADD VALUE IF NOT EXISTS 'ready'")
 
     # ── campaign_exports ─────────────────────────────────────────────────────
     op.create_table(
@@ -41,13 +56,13 @@ def upgrade() -> None:
         ),
         sa.Column(
             "format",
-            sa.Enum("meta", "twitter", "csv", name="export_format_enum", create_type=False),
+            ENUM("meta", "twitter", "csv", name="export_format_enum", create_type=False),
             nullable=False,
         ),
         sa.Column("profile_count", sa.Integer(), nullable=True),
         sa.Column(
             "status",
-            sa.Enum(
+            ENUM(
                 "pending", "processing", "ready", "failed",
                 name="export_status_enum",
                 create_type=False,
@@ -79,7 +94,7 @@ def upgrade() -> None:
         ),
         sa.Column(
             "type",
-            sa.Enum(
+            ENUM(
                 "export_ready",
                 "export_failed",
                 "campaign_activated",

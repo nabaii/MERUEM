@@ -5,16 +5,37 @@ Uses an in-memory SQLite database so tests run without a live Postgres instance.
 pgvector-specific types are mocked out at the DB level via a simple BLOB column.
 """
 
+import os
+
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine, event, text
+from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.orm import sessionmaker
+
+TEST_DB_URL = "sqlite:///./pytest-smoke.db"
+os.environ["DEBUG"] = "false"
+os.environ["DATABASE_URL"] = TEST_DB_URL
 
 from app.db.base import Base
 from app.db.session import get_db
 from app.main import app
 
-TEST_DB_URL = "sqlite:///:memory:"
+
+@compiles(JSONB, "sqlite")
+def compile_jsonb_sqlite(_type, _compiler, **_kwargs):
+    return "JSON"
+
+
+try:
+    from pgvector.sqlalchemy import Vector
+
+    @compiles(Vector, "sqlite")
+    def compile_vector_sqlite(_type, _compiler, **_kwargs):
+        return "BLOB"
+except Exception:
+    Vector = None
 
 
 @pytest.fixture(scope="session")
@@ -30,12 +51,6 @@ def engine():
 
     # Create all tables (Vector columns map to BLOB in SQLite)
     with eng.begin() as conn:
-        # Temporarily override Vector so SQLite accepts it
-        from pgvector.sqlalchemy import Vector
-        from sqlalchemy import types
-
-        # Monkeypatch Vector to use Float array repr for SQLite
-        original_visit = getattr(Vector, "impl", None)
         Base.metadata.create_all(bind=eng)
 
     yield eng

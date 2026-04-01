@@ -14,7 +14,16 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   }
   if (token) headers['Authorization'] = `Bearer ${token}`
 
-  const res = await fetch(`${BASE}${path}`, { ...init, headers })
+  let res: Response
+
+  try {
+    res = await fetch(`${BASE}${path}`, { ...init, headers })
+  } catch {
+    throw new ApiError(
+      0,
+      'Unable to reach the API server. Make sure the backend is running on http://localhost:8000.',
+    )
+  }
 
   if (!res.ok) {
     const body = await res.json().catch(() => ({ detail: res.statusText }))

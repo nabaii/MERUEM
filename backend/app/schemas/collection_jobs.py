@@ -6,7 +6,10 @@ from pydantic import BaseModel, Field
 
 
 class CollectionJobCreate(BaseModel):
-    platform: str = Field(default="twitter", pattern="^(twitter|instagram|facebook|tiktok)$")
+    platform: str = Field(
+        default="twitter",
+        pattern="^(twitter|instagram|facebook|tiktok|linkedin|manual)$",
+    )
     params: dict[str, Any] | None = None
     # params examples:
     # {"seed_usernames": ["BudweiserNG", "GTBankNG"], "max_profiles": 1000}

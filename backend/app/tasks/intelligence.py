@@ -357,11 +357,14 @@ def run_nightly_intelligence_pipeline() -> dict:
     Uses Celery chaining so each step waits for the previous to finish.
     """
     from celery import chain
+    from app.tasks.profiling_tasks import profile_unassessed_task, score_new_assessments_task
 
     pipeline = chain(
         classify_profiles_task.si(),
         cluster_profiles_task.si(),
         resolve_identities_task.si(),
+        profile_unassessed_task.si(),
+        score_new_assessments_task.si(),
     )
     result = pipeline.apply_async()
     log.info("Nightly intelligence pipeline started, root task_id=%s", result.id)

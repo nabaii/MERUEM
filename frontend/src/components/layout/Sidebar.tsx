@@ -7,6 +7,7 @@ import {
   LogOut,
   Zap,
   Megaphone,
+  DatabaseZap,
 } from 'lucide-react'
 import { cn } from '../../lib/utils'
 import { useAuthStore } from '../../store/authStore'
@@ -17,6 +18,7 @@ const NAV = [
   { to: '/explorer', label: 'Audience Explorer', icon: Search },
   { to: '/clusters', label: 'Clusters', icon: Network },
   { to: '/campaigns', label: 'Campaigns', icon: Megaphone },
+  { to: '/import', label: 'Import Data', icon: DatabaseZap },
   { to: '/settings', label: 'Settings', icon: Settings },
 ]
 

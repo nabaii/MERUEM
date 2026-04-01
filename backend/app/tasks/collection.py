@@ -38,6 +38,10 @@ def run_collection_job(self: Task, job_id: str) -> dict:
             count = _run_instagram_job(job, db)
         elif job.platform == "facebook":
             count = _run_facebook_job(job, db)
+        elif job.platform == "tiktok":
+            count = _run_tiktok_job(job, db)
+        elif job.platform == "linkedin":
+            count = _run_linkedin_job(job, db)
         else:
             raise NotImplementedError(f"Collector for '{job.platform}' not yet implemented")
 
@@ -204,6 +208,96 @@ def _run_facebook_job(job: CollectionJob, db) -> int:
         process_profile_task.apply_async(args=[pid], queue="processing")
     log.info("Auto-dispatched processing for %d FB profiles", len(profile_ids))
 
+    return count
+
+
+def _run_tiktok_job(job: CollectionJob, db) -> int:
+    """Run TikTok bot collection and persist results. Returns profile count."""
+    from app.collectors.tiktok import TikTokCollector
+    from app.core.config import settings
+    from app.tasks.processing import process_profile_task
+
+    params = job.params or {}
+    seed_usernames: list[str] = params.get("seed_usernames", [])
+    max_profiles: int = params.get("max_profiles", 500)
+    videos_per_user: int = params.get("videos_per_user", 20)
+
+    if not seed_usernames:
+        log.warning("No seed_usernames in TikTok job params — nothing to collect")
+        return 0
+
+    collector = TikTokCollector(
+        use_proxy=settings.bot_use_proxy,
+        headless=settings.bot_headless,
+    )
+    parsed_profiles = collector.collect_from_usernames(
+        seed_usernames=seed_usernames,
+        max_profiles=max_profiles,
+        videos_per_user=videos_per_user,
+    )
+
+    count = 0
+    profile_ids: list[str] = []
+    for parsed in parsed_profiles:
+        try:
+            profile = collector.upsert_profile(db, parsed)
+            profile_ids.append(str(profile.id))
+            count += 1
+        except Exception as exc:
+            log.warning("Failed to persist TikTok profile %s: %s", parsed.get("username"), exc)
+            db.rollback()
+        else:
+            db.commit()
+
+    for pid in profile_ids:
+        process_profile_task.apply_async(args=[pid], queue="processing")
+    log.info("Auto-dispatched processing for %d TikTok profiles", len(profile_ids))
+    return count
+
+
+def _run_linkedin_job(job: CollectionJob, db) -> int:
+    """Run LinkedIn API+bot collection and persist results. Returns profile count."""
+    from app.collectors.linkedin import LinkedInCollector
+    from app.core.config import settings
+    from app.tasks.processing import process_profile_task
+
+    params = job.params or {}
+    seed_usernames: list[str] = params.get("seed_usernames", [])
+    max_profiles: int = params.get("max_profiles", 300)
+    posts_per_profile: int = params.get("posts_per_profile", 10)
+    profile_type: str = params.get("profile_type", "person")
+
+    if not seed_usernames:
+        log.warning("No seed_usernames in LinkedIn job params — nothing to collect")
+        return 0
+
+    collector = LinkedInCollector(
+        use_proxy=settings.bot_use_proxy,
+        headless=settings.bot_headless,
+    )
+    parsed_profiles = collector.collect_from_usernames(
+        seed_usernames=seed_usernames,
+        max_profiles=max_profiles,
+        posts_per_profile=posts_per_profile,
+        profile_type=profile_type,
+    )
+
+    count = 0
+    profile_ids: list[str] = []
+    for parsed in parsed_profiles:
+        try:
+            profile = collector.upsert_profile(db, parsed)
+            profile_ids.append(str(profile.id))
+            count += 1
+        except Exception as exc:
+            log.warning("Failed to persist LinkedIn profile %s: %s", parsed.get("username"), exc)
+            db.rollback()
+        else:
+            db.commit()
+
+    for pid in profile_ids:
+        process_profile_task.apply_async(args=[pid], queue="processing")
+    log.info("Auto-dispatched processing for %d LinkedIn profiles", len(profile_ids))
     return count
 
 

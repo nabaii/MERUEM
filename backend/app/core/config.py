@@ -55,6 +55,25 @@ class Settings(BaseSettings):
     smtp_from: str = "noreply@meruem.app"
     smtp_tls: bool = True
 
+    # LinkedIn API (optional — enables API path for company pages)
+    linkedin_client_id: str = ""
+    linkedin_client_secret: str = ""
+    linkedin_access_token: str = ""
+
+    # Anthropic / profiling
+    anthropic_api_key: str = ""
+    anthropic_api_base: str = "https://api.anthropic.com/v1/messages"
+    anthropic_api_version: str = "2023-06-01"
+    anthropic_model: str = "claude-sonnet-4-20250514"
+    anthropic_timeout_seconds: int = 30
+    profiling_rate_limit_per_minute: int = 50
+    profiling_max_profiles_per_run: int = 500
+
+    # Bot scraper settings
+    bot_use_proxy: bool = True
+    bot_headless: bool = True
+    proxy_max_failures: int = 5     # Deactivate proxy after this many consecutive failures
+
     # App
     app_name: str = "Meruem"
     debug: bool = False

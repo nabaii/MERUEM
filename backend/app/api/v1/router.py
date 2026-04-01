@@ -7,9 +7,11 @@ from app.api.v1.routes import (
     collection_jobs,
     health,
     identity,
+    import_routes,
     lookalike,
     notifications,
     processing,
+    profiling,
     profiles,
     stats,
 )
@@ -28,3 +30,7 @@ api_router.include_router(stats.router)
 # Phase 5 — campaigns & notifications
 api_router.include_router(campaigns.router)
 api_router.include_router(notifications.router)
+# Phase 7 — multi-source ingestion (bot + manual import)
+api_router.include_router(import_routes.router)
+# Phase 8 — profiling pipeline
+api_router.include_router(profiling.router)

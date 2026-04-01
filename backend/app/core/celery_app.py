@@ -12,6 +12,7 @@ celery_app = Celery(
         "app.tasks.processing",
         "app.tasks.intelligence",
         "app.tasks.campaigns",
+        "app.tasks.profiling_tasks",
     ],
 )
 
@@ -28,6 +29,7 @@ celery_app.conf.update(
         "app.tasks.processing.*": {"queue": "processing"},
         "app.tasks.intelligence.*": {"queue": "intelligence"},
         "app.tasks.campaigns.*": {"queue": "default"},
+        "app.tasks.profiling_tasks.*": {"queue": "intelligence"},
     },
     beat_schedule={
         # Hourly Twitter collection — enabled once Twitter creds are configured

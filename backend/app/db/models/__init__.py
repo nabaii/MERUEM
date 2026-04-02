@@ -6,6 +6,7 @@ from app.db.models.campaign_export import CampaignExport  # noqa: F401
 from app.db.models.cluster import Cluster  # noqa: F401
 from app.db.models.cluster_metric import ClusterMetric  # noqa: F401
 from app.db.models.collection_job import CollectionJob  # noqa: F401
+from app.db.models.discovery_job import DiscoveryJob  # noqa: F401
 from app.db.models.notification import Notification  # noqa: F401
 from app.db.models.post import Post  # noqa: F401
 from app.db.models.profiling import LeadScore, ProfileAssessment, ProfilingJob  # noqa: F401

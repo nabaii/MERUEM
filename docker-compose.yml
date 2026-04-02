@@ -93,6 +93,8 @@ services:
     image: node:20-alpine
     working_dir: /app
     profiles: ["dev"]
+    environment:
+      - VITE_API_PROXY_TARGET=http://api:8000
     volumes:
       - ./frontend:/app
       - /app/node_modules

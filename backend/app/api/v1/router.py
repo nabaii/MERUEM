@@ -5,6 +5,7 @@ from app.api.v1.routes import (
     campaigns,
     clusters,
     collection_jobs,
+    discovery,
     health,
     identity,
     import_routes,
@@ -34,3 +35,5 @@ api_router.include_router(notifications.router)
 api_router.include_router(import_routes.router)
 # Phase 8 — profiling pipeline
 api_router.include_router(profiling.router)
+# Phase 9 — platform-specific user discovery
+api_router.include_router(discovery.router)

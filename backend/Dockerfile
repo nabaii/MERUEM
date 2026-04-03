@@ -7,6 +7,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq-dev \
     gcc \
     g++ \
+    ffmpeg \
+    tesseract-ocr \
     && rm -rf /var/lib/apt/lists/*
 
 # Install CPU-only PyTorch first to avoid pulling the ~2 GB CUDA build

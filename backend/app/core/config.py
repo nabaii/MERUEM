@@ -39,6 +39,12 @@ class Settings(BaseSettings):
     facebook_access_token: str = ""
     facebook_graph_api_version: str = "v19.0"
 
+    # TikTok Business API
+    tiktok_app_id: str = ""
+    tiktok_app_secret: str = ""
+    tiktok_access_token: str = ""
+    tiktok_webhook_secret: str = ""
+
     # Sentry error tracking (optional)
     sentry_dsn: str = ""
     sentry_environment: str = "development"
@@ -60,6 +66,9 @@ class Settings(BaseSettings):
     linkedin_client_secret: str = ""
     linkedin_access_token: str = ""
 
+    # OpenAI API
+    openai_api_key: str = ""
+
     # Anthropic / profiling
     anthropic_api_key: str = ""
     anthropic_api_base: str = "https://api.anthropic.com/v1/messages"
@@ -73,6 +82,16 @@ class Settings(BaseSettings):
     bot_use_proxy: bool = True
     bot_headless: bool = True
     proxy_max_failures: int = 5     # Deactivate proxy after this many consecutive failures
+
+    # Ghost Virality pipeline
+    ghost_proxy_url: str = ""           # e.g. http://user:pass@host:port — residential proxy
+    ghost_scout_cycle_hours: int = 6    # interval between t0 and t1 snapshot passes
+    ghost_outlier_reach_threshold: float = 20.0
+    ghost_ghost_viral_percentile_max: float = 30.0
+    # Niches to auto-scout on the Celery Beat schedule.
+    # Format: list of {"niche": "fitness", "accounts": ["acc1", "acc2"]}
+    # Configure in .env as JSON string or leave empty to use the admin panel.
+    ghost_scout_niches: list = []
 
     # App
     app_name: str = "Meruem"

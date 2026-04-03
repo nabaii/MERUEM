@@ -14,3 +14,4 @@ from app.db.models.profile_interest import ProfileInterest  # noqa: F401
 from app.db.models.profile_link import ProfileLink  # noqa: F401
 from app.db.models.social_profile import SocialProfile  # noqa: F401
 from app.db.models.unified_user import UnifiedUser  # noqa: F401
+from app.db.models.tiktok import TiktokMetricSnapshot, TiktokVelocityScore, SparkAdEvent, TiktokAuditReport  # noqa: F401

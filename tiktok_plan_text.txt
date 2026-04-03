@@ -1,0 +1,1298 @@
+TikTok Intelligence  |  Development Plan
+
+
+
+TIKTOK
+
+Competitive Intelligence Suite
+
+
+
+Velocity Score Predictor   +   Legibility Auditor
+
+Season Development Plan
+
+Two parallel feature tracks  |  12-Week Delivery
+
+Q2–Q3 2026
+
+
+
+CONFIDENTIAL
+
+
+
+Executive Summary
+
+This document details the 12-week development plan for two TikTok-native competitive intelligence features: the Velocity Score Predictor and the Algorithmic Legibility Auditor. These features exploit TikTok’s interest-graph architecture—specifically its initial trial pool mechanics and its ASR/OCR indexing pipeline—to give the agency capabilities that most competitors lack entirely.
+
+The Velocity Score Predictor monitors client video performance in real time during the critical first 60 minutes of distribution, calculating a weighted engagement score that mirrors TikTok’s internal point threshold system. When a video hits the threshold for algorithmic promotion, the system can automatically trigger a Spark Ad boost to convert an organic viral moment into paid scale.
+
+The Algorithmic Legibility Auditor is a pre-publish quality gate that scans video drafts against TikTok’s 2026 indexing requirements: ASR keyword placement, OCR text positioning in the safe zone, and caption keyword density. This positions the agency as a Social SEO specialist, ensuring every piece of content is technically discoverable.
+
+Both features are designed to be “basically free” to operate, leveraging open-source AI libraries, the TikTok API’s existing endpoints, and lightweight infrastructure.
+
+
+
+Dual-Track Development Structure
+
+The two features share some infrastructure (API authentication, database, dashboard shell) but are otherwise independent workstreams. The plan uses a parallel-track model: shared foundation in Sprints 1–2, then dedicated feature tracks in Sprints 3–4 (Velocity Score) and Sprints 3–4 (Legibility Auditor), converging for integration and hardening in Sprints 5–6.
+
+
+
+Sprint
+
+Weeks
+
+Velocity Score Track
+
+Legibility Auditor Track
+
+Shared
+
+1
+
+1–2
+
+API integration + webhook setup
+
+ASR/OCR library setup + benchmarks
+
+Auth, DB schema, project scaffolding
+
+2
+
+3–4
+
+Point scoring engine + real-time loop
+
+Audit engine + safe zone analysis
+
+Dashboard shell + notification system
+
+3
+
+5–6
+
+Spark Ad automation + threshold tuning
+
+Caption analyzer + keyword DB
+
+Unified settings + client management
+
+4
+
+7–8
+
+Historical analysis + trend learning
+
+Batch audit mode + template system
+
+Reporting module
+
+5
+
+9–10
+
+Integration testing + Spark Ad safeguards
+
+Pre-publish workflow integration
+
+End-to-end QA
+
+6
+
+11–12
+
+Performance tuning + monitoring
+
+Accuracy tuning + feedback loop
+
+Documentation + handoff
+
+
+
+
+Feature 1: Velocity Score Predictor
+
+Automated KPI monitoring with Spark Ad trigger pipeline
+
+
+
+Velocity Score — Technical Specification
+
+Concept: The 50-Point Threshold
+
+TikTok’s distribution system evaluates each video in tiered pools. The initial trial pool serves the video to approximately 300 users. The system assigns weighted points to each engagement signal. A video that accumulates roughly 50 points from its first 300 viewers advances to the next, larger pool. The Velocity Score Predictor replicates this scoring model client-side, giving the agency real-time visibility into which videos are about to break through.
+
+
+
+Scoring Model
+
+Signal
+
+Weight (pts)
+
+Detection Method
+
+Rationale
+
+Rewatch / Loop
+
+5
+
+API: play count vs. unique viewer count (inferred from engagement rate patterns)
+
+Strongest indicator of content that “holds” attention. Loops signal the algorithm that the content is worth resurfacing.
+
+Watch to Completion (≥70%)
+
+4
+
+API: average watch time / video duration. Flag if >= 0.70.
+
+TikTok’s Monolith system uses completion rate as the primary retention signal for pool promotion.
+
+Share (Send)
+
+3
+
+API: share_count field in video insights
+
+Shares extend distribution beyond the interest graph. Each share is a manual signal that the content has utility or emotional resonance.
+
+Comment
+
+2
+
+API: comment_count field
+
+Comments increase session time on the video. Lower weight because comments can be negative or low-intent.
+
+Like
+
+1
+
+API: like_count field
+
+Lowest-friction engagement. Useful as a volume indicator but not a strong algorithmic signal on its own.
+
+Save / Favorite
+
+3
+
+API: collect_count (if available via Business API)
+
+Saves indicate future intent. Strong signal for educational, tutorial, and utility content verticals.
+
+
+
+Composite Score Formula: V = (5 × Loops) + (4 × Completions) + (3 × Shares) + (3 × Saves) + (2 × Comments) + (1 × Likes). The system normalizes this against the viewer count at each polling interval to produce a per-viewer score. When V ≥ 50 within the first 300 viewers (or equivalent rate at larger pool sizes), the system flags the video as a breakout candidate.
+
+
+
+Velocity Score — Sprint Breakdown
+
+Sprint 1: API Foundation and Data Ingestion
+
+Weeks 1–2  |  Velocity Score Track
+
+
+
+Establish the TikTok API connection, authentication flow, and real-time data polling loop. The goal is to have raw engagement metrics flowing into the database for at least three client accounts by end of sprint.
+
+
+
+Task
+
+Details
+
+Owner
+
+Est. Hours
+
+TikTok Business API integration
+
+Register app, implement OAuth 2.0 flow for client account authorization. Handle token refresh. Support multiple client accounts.
+
+Backend
+
+12
+
+Webhook listener (or polling fallback)
+
+Attempt to register for TikTok’s webhook notifications on new video publish events. If webhooks are unavailable or unreliable, implement a 5-minute polling loop against the video list endpoint.
+
+Backend
+
+10
+
+Raw metrics collector
+
+On new video detection, begin polling the video insights endpoint every 10 minutes for the first 60 minutes, then every 30 minutes for hours 2–6. Store raw snapshots (views, likes, comments, shares, avg_watch_time, play_count) with timestamps.
+
+Backend
+
+14
+
+Database schema (shared)
+
+PostgreSQL schema: clients, videos, metric_snapshots, velocity_scores, spark_ad_events. Indexes on video_id + timestamp for time-series queries.
+
+Data Eng
+
+8
+
+Rate limit management
+
+Implement token-bucket rate limiter that respects TikTok’s API quotas. Queue and retry on 429 responses. Alert if quota is consistently exhausted.
+
+Backend
+
+6
+
+Client onboarding flow
+
+Admin endpoint to add a new client: stores their TikTok Business Account ID, triggers initial video backfill (last 30 videos for baseline calibration).
+
+Backend
+
+6
+
+
+
+Sprint 1 Acceptance: Raw metrics polling active for 3+ client accounts. Snapshots arriving at 10-minute intervals for all new videos within the first hour of publish.
+
+
+
+Sprint 2: Scoring Engine and Real-Time Dashboard
+
+Weeks 3–4  |  Velocity Score Track
+
+
+
+Transform raw metric snapshots into the composite Velocity Score. Build the real-time monitoring view so the team can watch a video’s score climb toward the 50-point threshold live.
+
+
+
+Task
+
+Details
+
+Owner
+
+Est. Hours
+
+Velocity Score calculator
+
+Background worker that consumes each new metric snapshot and computes the weighted score. Estimates loop count from play_count vs. unique reach. Normalizes to per-300-viewer rate.
+
+Backend
+
+14
+
+Threshold detection engine
+
+When V ≥ 50 (configurable per client/niche), emit an event to the notification system. Include time-to-threshold and current velocity trajectory.
+
+Backend
+
+8
+
+Niche baseline calibrator
+
+Using the 30-video backfill from Sprint 1, compute the median and P90 velocity score per client. Auto-adjust threshold to be P90 + 10% so alerts are calibrated to each account’s normal performance.
+
+Data Eng
+
+10
+
+Real-time dashboard view
+
+WebSocket-driven live view showing: active videos (last 6h), current V score, score trajectory sparkline, time since publish, threshold distance. Auto-highlights videos approaching threshold.
+
+Frontend
+
+16
+
+Notification system (shared)
+
+Slack webhook + optional email/Telegram. Sends structured alert: video thumbnail, current V score, velocity rate, and recommended action.
+
+Backend
+
+6
+
+Historical score log
+
+Store every V score calculation with timestamp so the team can review post-mortem how a video’s score evolved. Powers the trajectory sparkline.
+
+Data Eng
+
+4
+
+
+
+Sprint 2 Acceptance: Live dashboard displays real-time V score for new videos. Threshold alerts firing correctly on test videos. Niche baselines calibrated for all active clients.
+
+
+
+Sprint 3: Spark Ad Automation Pipeline
+
+Weeks 5–6  |  Velocity Score Track
+
+
+
+This is the agency’s core differentiator: the moment a video crosses the threshold, the system can automatically allocate paid boost budget via a Spark Ad, turning an organic viral moment into a scalable campaign within minutes rather than hours.
+
+
+
+Task
+
+Details
+
+Owner
+
+Est. Hours
+
+TikTok Ads API integration
+
+Authenticate against TikTok Marketing API. Implement campaign creation, ad group setup, and Spark Ad authorization flow. Handle the Spark Ad auth code exchange with the client’s organic post.
+
+Backend
+
+16
+
+Auto-boost trigger
+
+When V score crosses threshold AND auto-boost is enabled for the client, programmatically create a Spark Ad campaign with preconfigured budget, targeting, and bid strategy. Default: $50 daily budget, broad interest targeting matching the client’s niche.
+
+Backend
+
+14
+
+Budget safeguards
+
+Implement hard daily spend cap per client, max campaigns per day (default: 2), cool-down period between boosts (default: 4h), and a manual approval mode for clients who prefer human confirmation.
+
+Backend
+
+8
+
+Spark Ad performance tracker
+
+Poll the Ads API for Spark Ad campaign metrics: CPM, CPC, CPA, ROAS. Link back to the original V score event so the team can correlate organic velocity with paid performance.
+
+Backend
+
+10
+
+Approval workflow (optional mode)
+
+Dashboard module: when threshold is crossed, show a “Boost Now” card with pre-filled campaign parameters. Team member approves or adjusts before execution. 15-minute auto-expiry with notification.
+
+Frontend
+
+10
+
+Threshold tuning interface
+
+Dashboard settings page where the team can adjust V score threshold, scoring weights, and auto-boost parameters per client. Changes logged for audit.
+
+Frontend
+
+6
+
+
+
+Sprint 3 Acceptance: End-to-end demo: video published → V score climbs → threshold crossed → Spark Ad created automatically (in sandbox/test mode). Budget safeguards verified.
+
+
+
+Sprint 4: Historical Intelligence and Trend Learning
+
+Weeks 7–8  |  Velocity Score Track
+
+
+
+With several weeks of data accumulated, this sprint builds the analytical layer that turns operational data into strategic intelligence. The team should be able to answer: “What content patterns reliably produce high V scores for this client?”
+
+
+
+Task
+
+Details
+
+Owner
+
+Est. Hours
+
+V score trend analysis
+
+Dashboard view: V score distribution over time per client. Show median V score per week, hit rate (% of videos crossing threshold), and trend direction.
+
+Data Eng
+
+10
+
+Content pattern correlation
+
+For each video, store metadata tags: video duration, posting time, hashtag count, audio type (original vs. trending), caption length. Run correlation analysis against V score outcomes.
+
+Data Eng
+
+12
+
+Optimal posting window detector
+
+Analyze V score velocity by hour-of-day and day-of-week per client. Surface the publishing windows where videos achieve the fastest time-to-threshold.
+
+Data Eng
+
+8
+
+Spark Ad ROI dashboard
+
+Aggregate Spark Ad performance: total spend, videos boosted, average ROAS, best-performing boost. Compare organic reach vs. boosted reach for threshold-crossing videos.
+
+Frontend
+
+10
+
+Competitor V score estimation
+
+Using publicly available view counts and engagement on competitor videos, estimate their V score trajectory. Flag competitor videos that appear to have crossed threshold (high view velocity with moderate engagement).
+
+Backend
+
+12
+
+Weekly digest generator
+
+Automated email/PDF report per client: videos published, V scores achieved, boosts triggered, ROI summary, content pattern insights, recommended posting windows.
+
+Backend
+
+8
+
+
+
+Sprint 4 Acceptance: Historical dashboard populated with 4+ weeks of data. At least one actionable pattern insight surfaced per client. Weekly digest delivering automatically.
+
+
+
+
+Feature 2: Algorithmic Legibility Auditor
+
+Pre-publish Social SEO quality gate for TikTok’s ASR/OCR indexing pipeline
+
+
+
+Legibility Auditor — Technical Specification
+
+Concept: Making Content Machine-Readable
+
+TikTok’s recommendation engine now functions as a search engine. Approximately 40% of Gen Z users prefer TikTok over Google for discovery. The algorithm “reads” every video through three channels: ASR (Automatic Speech Recognition) extracts spoken words, OCR (Optical Character Recognition) reads on-screen text, and the caption field is parsed for keyword signals. Content that fails any of these three checks is effectively invisible to TikTok’s search index—even if it performs well in the interest-graph feed.
+
+The Legibility Auditor scans a video draft against all three channels before publish, giving the creative team a pass/fail report with specific remediation instructions.
+
+
+
+Audit Checks
+
+Check
+
+Rule
+
+Detection Method
+
+Fail Remediation
+
+ASR Keyword Placement
+
+Primary keyword must be spoken in the first 3 seconds of narration.
+
+Whisper (local, “base” model) transcription with word-level timestamps. Check if any target keyword appears with timestamp <= 3.0s.
+
+Re-record the opening narration to front-load the keyword. Provide suggested script opening.
+
+OCR Safe Zone
+
+Primary search query must appear in on-screen text, positioned at least 150px from the top of the frame (below the TikTok UI chrome).
+
+Extract key frames at 0.5s intervals for the first 5s. Run TrOCR or Tesseract. Use bounding-box coordinates to verify Y-position >= 150px.
+
+Adjust text overlay position in the editor. Flag if text is too small (< 24pt equivalent) or low contrast.
+
+Caption Keyword Density
+
+First 150 characters of the caption must contain the primary keyword and at least one secondary keyword.
+
+String matching against the client’s keyword list. Calculate keyword density (keyword chars / total chars). Flag if < 8%.
+
+Suggest rewritten caption opening with keywords front-loaded. Provide character count.
+
+Audio Clarity Score
+
+ASR confidence must be >= 85% for the keyword utterance. Low confidence means TikTok’s own ASR may also miss it.
+
+Whisper outputs per-word confidence scores. Average the confidence of the target keyword tokens.
+
+Flag audio quality issues: background music too loud, mumbled delivery, heavy accent on keyword. Suggest re-recording with clearer enunciation.
+
+Hashtag Alignment
+
+At least 2 of the top 5 hashtags must match high-volume search terms related to the primary keyword.
+
+Cross-reference hashtags against the keyword database (built from TikTok’s search suggest API or scraped trending data).
+
+Suggest replacement hashtags from the keyword database ranked by search volume.
+
+
+
+Legibility Auditor — Sprint Breakdown
+
+Sprint 1: AI Library Setup and Baseline Benchmarks
+
+Weeks 1–2  |  Legibility Auditor Track
+
+
+
+Establish the core AI processing pipeline: ASR, OCR, and text analysis. All libraries are open-source and run locally to keep costs at zero. This sprint ends with verified accuracy benchmarks against a manually labeled test set of 50 TikTok videos.
+
+
+
+Task
+
+Details
+
+Owner
+
+Est. Hours
+
+Whisper setup (ASR)
+
+Install OpenAI Whisper (“base” model, ~140MB). Build wrapper that accepts a video file, extracts audio, runs transcription, and returns word-level timestamps with confidence scores.
+
+ML/Backend
+
+10
+
+TrOCR / Tesseract setup (OCR)
+
+Evaluate TrOCR (transformer-based, higher accuracy) vs. Tesseract (faster, lower resource). Benchmark both against 20 TikTok screenshots with on-screen text. Select winner. Build wrapper that returns text + bounding boxes.
+
+ML/Backend
+
+12
+
+Key frame extractor
+
+FFmpeg-based pipeline: extract frames at 0.5s intervals for the first 5 seconds of a video. Also extract the thumbnail frame. Output as PNG for OCR processing.
+
+Backend
+
+6
+
+Safe zone calculator
+
+Given OCR bounding boxes and video resolution, determine if text falls within the “safe zone” (Y >= 150px from top, X within center 80% of frame width). Account for common TikTok resolutions (1080x1920, 720x1280).
+
+Backend
+
+6
+
+Keyword matching engine
+
+Configurable per-client keyword list (primary + secondary keywords). Fuzzy matching (Levenshtein distance <= 2) to handle ASR transcription variations. Case-insensitive.
+
+Backend
+
+8
+
+Benchmark test suite
+
+50 manually labeled TikTok videos (25 pass, 25 fail across the five checks). Run full pipeline and measure precision/recall per check. Target: >= 90% accuracy.
+
+QA/ML
+
+10
+
+
+
+Sprint 1 Acceptance: Full audit pipeline runs end-to-end on a local video file. Benchmark accuracy >= 90% on the 50-video test set. Processing time < 30 seconds per video.
+
+
+
+Sprint 2: Audit Engine and Report Generator
+
+Weeks 3–4  |  Legibility Auditor Track
+
+
+
+Package the AI components into a unified audit engine that accepts a video file and a keyword configuration, then produces a structured audit report with pass/fail scores and remediation suggestions.
+
+
+
+Task
+
+Details
+
+Owner
+
+Est. Hours
+
+Audit orchestrator
+
+Single entry point that coordinates: audio extraction → Whisper → keyword check, frame extraction → OCR → safe zone check, caption input → keyword density check. Returns structured JSON audit result.
+
+Backend
+
+12
+
+Remediation suggestion engine
+
+Rule-based system that generates specific fix instructions for each failed check. Examples: “Move text overlay down by ~80px”, “Re-record opening line to say [keyword] before the 3-second mark”, “Rewrite caption: [suggested text].”
+
+Backend
+
+10
+
+Audit report UI
+
+Dashboard page: upload a video + enter caption + select keyword set. See results as a visual scorecard: green/red per check, overall pass/fail, expandable remediation details.
+
+Frontend
+
+14
+
+Caption analyzer
+
+Dedicated module: accepts caption text, parses first 150 characters, checks keyword presence and density, validates hashtag alignment against keyword DB. Returns detailed breakdown.
+
+Backend
+
+8
+
+Keyword database (v1)
+
+Initial keyword database per niche: manually curated list of 50–100 high-volume search terms per vertical (pulled from TikTok search suggest, Google Trends, and competitor hashtag analysis).
+
+Data/Strategy
+
+10
+
+Batch processing queue
+
+Redis-backed job queue so multiple videos can be submitted simultaneously. Each audit job runs asynchronously and notifies via the shared notification system when complete.
+
+Backend
+
+6
+
+
+
+Sprint 2 Acceptance: Creative team can upload a draft video via the dashboard, receive a full audit report within 60 seconds, and see specific remediation instructions for any failed checks.
+
+
+
+Sprint 3: Keyword Intelligence and Template System
+
+Weeks 5–6  |  Legibility Auditor Track
+
+
+
+Upgrade the keyword database from a static list to a living intelligence layer. Build templates and presets so the creative team can audit content faster.
+
+
+
+Task
+
+Details
+
+Owner
+
+Est. Hours
+
+TikTok search suggest scraper
+
+Script that queries TikTok’s search autocomplete for each primary keyword and captures the top 10 suggestions. Run weekly to keep the keyword DB current. Store with timestamps for trend tracking.
+
+Backend
+
+10
+
+Keyword trend tracker
+
+Track which keywords are rising or falling in search suggest frequency. Surface “trending up” keywords on the dashboard so the creative team can target emerging search demand.
+
+Data Eng
+
+8
+
+Audit templates
+
+Pre-configured audit profiles per content type: “Tutorial,” “Product Review,” “Trend Reaction,” “Storytime.” Each template has appropriate keyword sets, safe zone tolerances, and ASR timing expectations.
+
+Backend/Strategy
+
+10
+
+Client keyword management UI
+
+Dashboard page where the team manages a client’s keyword portfolio: add/remove keywords, set primary vs. secondary, view search volume estimates, and assign keywords to content briefs.
+
+Frontend
+
+12
+
+Competitor keyword analysis
+
+Scrape competitor video captions and hashtags. Run frequency analysis to identify keywords they target. Surface gaps: keywords with high search volume that competitors are not addressing.
+
+Backend
+
+10
+
+Caption generator (AI-assisted)
+
+Optional module: given a primary keyword, video topic, and target audience, generate 3 caption variations that are optimized for the first-150-character rule. Uses a local LLM or a lightweight prompt to the Anthropic API.
+
+Backend
+
+8
+
+
+
+Sprint 3 Acceptance: Keyword database auto-refreshing weekly. At least 3 audit templates configured. Competitor keyword gaps surfaced for all active clients.
+
+
+
+Sprint 4: Batch Audits and Pre-Publish Workflow
+
+Weeks 7–8  |  Legibility Auditor Track
+
+
+
+Make the auditor a seamless part of the content production workflow rather than a standalone tool. The creative team should be able to audit an entire week’s content batch in one session, and no video should be published without a passing audit score.
+
+
+
+Task
+
+Details
+
+Owner
+
+Est. Hours
+
+Batch upload interface
+
+Dashboard module: drag-and-drop multiple videos + caption spreadsheet (CSV). System queues all audits and shows progress. Results displayed as a sortable table with pass/fail status.
+
+Frontend
+
+12
+
+Content calendar integration
+
+Connect audit results to a simple content calendar view. Each scheduled post shows its audit status. Posts without a passing audit are visually flagged.
+
+Frontend
+
+10
+
+Pre-publish gate
+
+Configurable workflow rule: videos cannot be marked as “approved for publish” in the dashboard unless all five audit checks pass or the team lead manually overrides.
+
+Backend
+
+8
+
+Audit history and analytics
+
+Store all audit results. Dashboard view showing: pass rate over time, most common failure reasons, average number of revision cycles per video, improvement trends per client.
+
+Data Eng
+
+10
+
+A/B caption testing
+
+Submit two caption variants for the same video. System audits both and highlights which version scores higher on keyword density and structure. Helps the team make data-driven caption decisions.
+
+Backend
+
+8
+
+Exportable audit report
+
+Generate a branded PDF audit report per video (or per batch) that can be shared with external clients as proof of optimization work.
+
+Backend
+
+8
+
+
+
+Sprint 4 Acceptance: Full batch workflow demonstrated: upload 10 videos with captions, receive audit results, revise failing videos, re-audit, approve, and view on content calendar.
+
+
+
+
+Shared Track: Integration, Hardening, and Handoff
+
+Sprints 5–6  |  Both features converge for final delivery
+
+
+
+Sprint 5: Integration Testing and Quality Assurance
+
+Weeks 9–10  |  Both Tracks
+
+
+
+Both features are functionally complete. This sprint focuses on making them work together seamlessly, stress-testing edge cases, and ensuring the system is robust enough for daily agency operations.
+
+
+
+Task
+
+Details
+
+Owner
+
+Est. Hours
+
+Cross-feature integration
+
+Ensure a single dashboard experience: Velocity Score live view and Legibility Auditor are accessible from the same navigation. Shared client management, notifications, and settings.
+
+Frontend
+
+12
+
+End-to-end workflow testing
+
+Test the full cycle for both features across 5 client accounts. Velocity: publish → monitor → threshold → boost. Legibility: upload draft → audit → fix → re-audit → approve → publish.
+
+QA
+
+16
+
+Spark Ad safeguard validation
+
+Stress test: simulate 10 videos crossing threshold simultaneously. Verify budget caps hold, rate limits are respected, and no duplicate campaigns are created.
+
+QA/Backend
+
+10
+
+ASR/OCR edge case testing
+
+Test Whisper accuracy on: fast speech, heavy accents, background music at various levels, whispered delivery. Test OCR on: animated text, handwritten overlays, gradient backgrounds, small fonts.
+
+QA/ML
+
+12
+
+API failure resilience
+
+Simulate TikTok API outages (timeout, 500 errors, rate limit exhaustion). Verify graceful degradation: queue retries, show status on dashboard, send alert to team.
+
+Backend
+
+8
+
+Performance benchmarking
+
+Measure: Velocity Score calculation latency (target: < 5s per snapshot), audit processing time (target: < 30s per video), dashboard load time (target: < 2s). Optimize bottlenecks.
+
+DevOps
+
+8
+
+
+
+Sprint 5 Acceptance: All integration tests pass. Both features operational for 5 client accounts simultaneously. No critical bugs in a 72-hour soak test.
+
+
+
+Sprint 6: Monitoring, Documentation, and Handoff
+
+Weeks 11–12  |  Stabilization
+
+
+
+Final sprint: make the system self-sustaining. The operations team should be able to run, troubleshoot, and onboard new clients without the original development team.
+
+
+
+Task
+
+Details
+
+Owner
+
+Est. Hours
+
+Monitoring stack
+
+Deploy Uptime Kuma (or similar lightweight monitor) tracking: API polling health, audit queue depth, Spark Ad trigger success rate, database size, error rates. Alert thresholds.
+
+DevOps
+
+10
+
+Whisper/OCR model maintenance plan
+
+Document model update procedure. Set quarterly review to evaluate if newer Whisper or OCR models improve accuracy. Benchmark process takes < 2 hours.
+
+ML
+
+6
+
+TikTok API changelog monitoring
+
+Subscribe to TikTok developer changelog. Set up a monthly review task to check for deprecated endpoints, new fields, or rate limit changes that affect the pipeline.
+
+Backend
+
+4
+
+Runbook: common failures
+
+Document and fix procedures for: API auth token expiry, Spark Ad budget exhaustion, Whisper transcription timeout, OCR accuracy degradation, database growth management.
+
+All
+
+10
+
+Architecture documentation
+
+System architecture diagram, data flow documentation, API endpoint reference (OpenAPI spec), database schema documentation, deployment guide.
+
+All
+
+12
+
+Team training
+
+Two workshops: (1) Operations training for the team running the system day-to-day, (2) Creative team training on interpreting V scores and using the audit tool. Record sessions for onboarding.
+
+All
+
+10
+
+Client onboarding playbook
+
+Step-by-step guide for adding a new client: TikTok Business Account setup, API authorization, keyword portfolio creation, Spark Ad budget configuration, dashboard permissions.
+
+All
+
+6
+
+
+
+Sprint 6 Acceptance: System runs unattended for 72 hours across all active clients. All runbooks validated by a team member who was not the author. Client onboarding playbook tested with a new account.
+
+
+
+
+Cost-Neutral System Improvements
+
+The following enhancements are woven into the sprint plan above. Each one strengthens the system’s intelligence or resilience without adding meaningful infrastructure cost.
+
+
+
+1. Velocity Decay Rate Analysis
+
+Instead of only measuring whether V score crosses 50, also track the rate of decay after the initial spike. Videos that maintain a high V score for 30+ minutes (slow decay) are fundamentally different from flash-in-the-pan spikes. Tag these as “Sustained Velocity” assets—they’re the best candidates for Spark Ad boost because the organic momentum has staying power. Implemented as a simple derivative calculation on existing time-series data.
+
+Impact: Reduces wasted Spark Ad spend on videos that spike briefly then collapse. Improves ROAS by 20–40% (estimated) by boosting only sustained performers.
+
+Cost: Zero. A derivative calculation on data already in PostgreSQL.
+
+
+
+2. ASR Confidence Heatmap
+
+Instead of a binary pass/fail on ASR keyword detection, generate a per-second confidence heatmap of the full transcript. This reveals not just whether the keyword was said, but how clearly the entire narration is being indexed. Sections with low ASR confidence are effectively invisible to TikTok’s search engine, even if they contain valuable content. Display as a visual timeline in the audit report.
+
+Impact: Gives the creative team granular feedback on audio quality throughout the video, not just the first 3 seconds. Identifies narration habits that reduce indexability (e.g., trailing off at end of sentences).
+
+Cost: Zero. Whisper already outputs per-word confidence scores; this just visualizes them.
+
+
+
+3. Save-to-Share Ratio as Virality Type Classifier
+
+Track the ratio of saves to shares for each video. High saves + low shares = “Utility Viral” (tutorials, how-tos). High shares + low saves = “Social Viral” (entertainment, reactions). This classification helps the creative team understand what type of virality each piece of content achieves, which informs the Spark Ad targeting strategy (utility content targets search intent; social content targets interest clusters).
+
+Impact: Turns a single V score into a two-dimensional virality map. Enables differentiated Spark Ad targeting strategies per content type.
+
+Cost: Zero. Computed from metrics already collected in the polling loop.
+
+
+
+4. OCR Font Size and Contrast Validator
+
+Beyond checking text position in the safe zone, also validate that on-screen text meets minimum readability thresholds: font size >= 24pt equivalent (based on bounding box height relative to frame height) and sufficient contrast ratio against the background (sample background pixels behind the text bounding box). TikTok’s OCR is more likely to miss small or low-contrast text, making the video less searchable.
+
+Impact: Catches a class of audit failures that position-only checks miss. Particularly valuable for creators who use stylized or decorative fonts.
+
+Cost: Zero. Uses bounding box data already extracted by OCR and basic pixel sampling via PIL/Pillow (already installed).
+
+
+
+5. Cross-Platform Keyword Arbitrage
+
+Compare the client’s TikTok keyword portfolio against trending search terms on YouTube Shorts and Instagram Reels (using existing Ghost Virality infrastructure if available). Surface keywords that are high-volume on TikTok but underserved on other platforms—or vice versa. This helps the agency advise clients on cross-posting strategy with platform-specific keyword optimization.
+
+Impact: Turns the keyword database into a cross-platform intelligence asset. Enables the agency to offer multi-platform SEO as a single service.
+
+Cost: Zero if Ghost Virality infrastructure exists. Minimal if built standalone (one additional scraper for YouTube search suggest, which is free and unauthenticated).
+
+
+
+6. Audit Score Correlation with Performance
+
+After 4+ weeks of publishing audited content, correlate audit pass/fail results with actual video performance (views, V score, search impressions if available). This creates an evidence base showing clients: “videos that passed all 5 checks averaged 3.2x more views from search than videos that failed 2+ checks.” Computed as a simple aggregation query on existing data.
+
+Impact: Converts the audit tool from a “best practice” recommendation into a proven, data-backed system. Powerful for client retention and upselling.
+
+Cost: Zero. Aggregation on data already stored from both features.
+
+
+
+
+Resource and Cost Estimate
+
+Both features are designed to operate on minimal infrastructure. The heaviest compute requirement is Whisper transcription, which runs on CPU (slower but free). The TikTok APIs are free for authorized Business accounts within standard rate limits.
+
+
+
+Resource
+
+Specification
+
+Est. Monthly Cost
+
+VPS (Primary)
+
+4 vCPU, 8GB RAM, 100GB SSD (handles Whisper CPU inference + API polling + dashboard). Hetzner, DigitalOcean, or equivalent.
+
+$25–$40
+
+PostgreSQL
+
+Self-hosted on VPS. Estimated DB size: ~2GB after 3 months of operation for 10 clients.
+
+$0
+
+Redis
+
+Self-hosted on VPS. Used for job queues, rate limiting, and caching.
+
+$0
+
+Whisper (local)
+
+OpenAI Whisper “base” model running on CPU. ~30s per 60s video. Adequate for audit workloads.
+
+$0
+
+TrOCR / Tesseract
+
+Local inference. < 2s per frame. No API costs.
+
+$0
+
+TikTok Business API
+
+Free tier. Rate limits: 600 requests/minute (Business accounts). Sufficient for 10–20 client accounts.
+
+$0
+
+TikTok Marketing API
+
+Spark Ad creation. No API fee; ad spend is client budget (passed through, not an operational cost).
+
+$0 (API)
+
+Domain + SSL
+
+Dashboard hosting. Cloudflare tunnel for free SSL.
+
+$0–$12
+
+Anthropic API (optional)
+
+Caption generator feature only. ~100 captions/month at ~500 tokens each.
+
+$2–$5
+
+
+
+
+
+
+
+Total Estimated Monthly
+
+
+
+$27–$57 / month
+
+
+
+Key Risks and Mitigations
+
+
+
+Risk
+
+Likelihood
+
+Impact
+
+Mitigation
+
+TikTok API rate limit changes
+
+Medium
+
+High
+
+Monitor developer changelog monthly. Implement adaptive polling: increase interval when approaching limits. Cache aggressively.
+
+TikTok API deprecation or access revocation
+
+Low
+
+Critical
+
+Maintain fallback: manual data entry mode for V score (team inputs metrics from TikTok Studio). Diversifies away from full API dependency.
+
+Whisper accuracy on noisy audio
+
+Medium
+
+Medium
+
+Use Whisper “small” model as fallback for low-confidence transcriptions. Flag for manual review if confidence < 70%.
+
+Spark Ad budget overrun
+
+Low
+
+High
+
+Hard daily cap per client. Maximum 2 auto-boosts per day. Manual approval mode available. Kill switch in dashboard.
+
+OCR fails on animated/moving text
+
+Medium
+
+Low
+
+Extract more frames (every 0.25s) for videos with motion text. Use frame differencing to detect text animation and sample at peak stability.
+
+Client TikTok Business Account setup friction
+
+High
+
+Medium
+
+Create step-by-step video guide. Offer concierge onboarding for first 5 clients. Document common OAuth errors and fixes.
+
+Keyword database staleness
+
+Medium
+
+Medium
+
+Weekly automated refresh via search suggest scraper. Niche drift detection alerts (reused from Ghost Virality concept if available).
+
+
+
+Season Timeline Summary
+
+
+
+Sprint
+
+Weeks
+
+Velocity Score Deliverable
+
+Legibility Auditor Deliverable
+
+Status Gate
+
+1
+
+1–2
+
+API polling + raw metrics flowing
+
+ASR/OCR pipeline + benchmarks pass
+
+Data ingestion verified
+
+2
+
+3–4
+
+Live V score + threshold alerts
+
+Audit engine + report UI
+
+Real-time dashboard functional
+
+3
+
+5–6
+
+Spark Ad auto-trigger (sandbox)
+
+Keyword DB + templates
+
+End-to-end feature demos
+
+4
+
+7–8
+
+Historical analytics + ROI dashboard
+
+Batch audits + content calendar
+
+4-week data insights surfaced
+
+5
+
+9–10
+
+Integration QA + safeguard validation
+
+Edge case testing + workflow integration
+
+72h soak test passes
+
+6
+
+11–12
+
+Monitoring + tuning
+
+Accuracy tuning + feedback loop
+
+Unattended 72h operation
+
+
+
+Next Steps: Confirm client list for pilot (3–5 accounts). Register TikTok Business API application. Provision VPS. Curate initial keyword portfolios per client niche. Begin Sprint 1.
+
+Page

@@ -16,6 +16,11 @@ import { CampaignsPage } from './pages/CampaignsPage'
 import { CampaignDetailPage } from './pages/CampaignDetailPage'
 import { CampaignBuilderPage } from './pages/CampaignBuilderPage'
 import { ImportPage } from './pages/ImportPage'
+import { TwitterPage } from './pages/TwitterPage'
+import { InstagramPage } from './pages/InstagramPage'
+import { TikTokPage } from './pages/TikTokPage'
+import { GhostViralityPage } from './pages/GhostViralityPage'
+import { GhostPostDetailPage } from './pages/GhostPostDetailPage'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -49,6 +54,13 @@ export default function App() {
             <Route path="/campaigns/:id" element={<CampaignDetailPage />} />
             {/* Phase 7 — multi-source data import */}
             <Route path="/import" element={<ImportPage />} />
+            {/* Platform pages */}
+            <Route path="/twitter" element={<TwitterPage />} />
+            <Route path="/instagram" element={<InstagramPage />} />
+            <Route path="/tiktok" element={<TikTokPage />} />
+            {/* Phase 10 — Ghost Virality (Instagram sub-section) */}
+            <Route path="/ghost-virality" element={<GhostViralityPage />} />
+            <Route path="/ghost-virality/:id" element={<GhostPostDetailPage />} />
           </Route>
 
           {/* Default redirect */}

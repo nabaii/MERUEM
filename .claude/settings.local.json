@@ -8,7 +8,21 @@
       "Bash(python -m playwright install chromium)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(xargs wc:*)",
+      "Bash(xargs ls:*)",
+      "Bash(xargs basename:*)",
+      "Bash(npm run:*)",
+      "Bash(npx vite:*)",
+      "Bash(tasklist /fi \"imagename eq node.exe\" /fo csv)",
+      "Bash(netstat -ano)",
+      "Bash(cmd /c \"FOR /F \\\\\"tokens=5\\\\\" %P IN \\('netstat -ano ^| findstr :3000 ^| findstr LISTENING'\\) DO taskkill /F /PID %P\")",
+      "Bash(cmd /c \"taskkill /F /PID 19416 /PID 6012\")",
+      "Bash(echo \"exit: $?\")",
+      "Bash(powershell -Command \"Stop-Process -Id 19416, 6012 -Force -ErrorAction SilentlyContinue; Start-Sleep -Seconds 1; Get-NetTCPConnection -LocalPort 3000 -ErrorAction SilentlyContinue | Select-Object State,OwningProcess\")",
+      "Bash(powershell.exe -NoProfile -Command \"Get-Process -Id 19416 | Select-Object Name,Id; Stop-Process -Id 19416 -Force\")",
+      "Bash(powershell.exe -NoProfile -Command \"Get-NetTCPConnection -LocalPort 3000 -ErrorAction SilentlyContinue | Select-Object LocalAddress,LocalPort,State,OwningProcess\")",
+      "Bash(powershell.exe -NoProfile -Command \"netstat -ano | Select-String ':3000'\")"
     ]
   }
 }

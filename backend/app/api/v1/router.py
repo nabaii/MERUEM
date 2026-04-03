@@ -6,6 +6,7 @@ from app.api.v1.routes import (
     clusters,
     collection_jobs,
     discovery,
+    ghost_virality,
     health,
     identity,
     import_routes,
@@ -15,6 +16,7 @@ from app.api.v1.routes import (
     profiling,
     profiles,
     stats,
+    tiktok,
 )
 
 api_router = APIRouter()
@@ -37,3 +39,7 @@ api_router.include_router(import_routes.router)
 api_router.include_router(profiling.router)
 # Phase 9 — platform-specific user discovery
 api_router.include_router(discovery.router)
+# Phase 10 — Ghost Virality scouting pipeline (Instagram)
+api_router.include_router(ghost_virality.router)
+# Phase 11 — TikTok Intelligence
+api_router.include_router(tiktok.router, prefix="/tiktok", tags=["tiktok"])
